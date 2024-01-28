@@ -7,8 +7,8 @@ A tool for testing interactive command line interfaces.
 
 ## Features
 
--   Test every command line interface - no matter in which programming language it is written
--   Test interactive command line interfaces that require user input
+-   Test every command line interface - no matter in which programming language it is written 🧪
+-   Test interactive command line interfaces that require user input ⌨️
 -   Zero dependencies 📦
 
 ## Sources

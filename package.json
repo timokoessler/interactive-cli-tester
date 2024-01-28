@@ -27,6 +27,7 @@
         "command-line",
         "testing",
         "test",
+        "command-line-interface",
         "terminal",
         "jest"
     ],

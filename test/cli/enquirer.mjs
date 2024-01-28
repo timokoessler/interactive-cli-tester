@@ -8,7 +8,7 @@ import enquirer from 'enquirer';
     const actionPrompt = new enquirer.Select({
         name: 'value',
         message: 'What do you want to do?',
-        choices: [{ name: 'Action A' }, { name: 'Action B' }, { name: 'Exit' }],
+        choices: [{ name: 'Action A' }, { name: 'Action B' }, { name: 'Action C' }],
         initial: 0,
     });
 
@@ -16,15 +16,22 @@ import enquirer from 'enquirer';
         const action = await actionPrompt.run();
 
         switch (action) {
-            case 'Action A':
+            case 'Action C':
+                break;
+            default:
                 process.exit(1);
                 break;
-            case 'Action B':
-                process.exit(2);
-                break;
-            case 'Exit':
-                process.exit(0);
         }
+
+        const inputPrompt = new enquirer.Input({
+            name: 'value',
+            message: 'Input test value',
+        });
+
+        const value = await inputPrompt.run();
+
+        console.log(`Test value: ${value}`);
+        process.exit(0);
     } catch {
         process.exit(1);
     }

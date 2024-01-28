@@ -6,7 +6,6 @@ export default {
     },
     collectCoverage: true,
     collectCoverageFrom: ['src/**/*.ts'],
-    testTimeout: 10000,
+    testTimeout: 5000,
     coverageDirectory: 'coverage',
-    forceExit: true,
 };

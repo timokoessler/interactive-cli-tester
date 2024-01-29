@@ -36,4 +36,35 @@ test('Input value and exit', async () => {
 
     const exitCodeTwo = await cliTest.getExitCode();
     expect(exitCodeTwo).toBe(0);
+
+    expect(cliTest.isRunning()).toBe(false);
+    expect(cliTest.getOutput()).toContain('Test value: Test');
+});
+
+test('Run again', async () => {
+    await cliTest.run();
+    await cliTest.waitForOutput('What do you want to do?');
+    expect(cliTest.isRunning()).toBe(true);
+    expect(cliTest.getExitCode()).toBe(null);
+});
+
+test('Test onOutput', async () => {
+    let output = '';
+    cliTest.onOutput((data) => {
+        output += data;
+    });
+
+    await cliTest.write(ANSI.CURSOR_DOWN);
+    await cliTest.write(ANSI.CURSOR_DOWN);
+    await cliTest.write(ANSI.CR);
+
+    await cliTest.waitForOutput('Input test value');
+    expect(output).toContain('Input test value');
+});
+
+test('Test kill', async () => {
+    expect(cliTest.isRunning()).toBe(true);
+    cliTest.kill();
+    expect(await cliTest.waitForExit()).toBe(null);
+    expect(cliTest.isRunning()).toBe(false);
 });

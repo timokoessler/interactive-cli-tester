@@ -41,6 +41,9 @@ export type CLITestOptions = {
     };
 };
 
+const genericNotRunErr = (action: string) =>
+    `Can not ${action} when CLI process is not running. Call run() first and ensure the process started and did not exit.`;
+
 export class CLITest {
     private command: string;
     private args: string[];
@@ -65,9 +68,13 @@ export class CLITest {
         this.options = { ...defaultOptions, ...options };
     }
 
+    /**
+     * Run the CLI process.
+     * @returns A promise that resolves when the process has been started.
+     */
     run(): Promise<void> {
         if (this.running || this.starting) {
-            throw new Error('Process already running');
+            throw new Error('Process is already running or starting.');
         }
         this.starting = true;
         this.childProcess = spawn(this.command, this.args, {
@@ -97,7 +104,7 @@ export class CLITest {
             this.output += dataString;
             this.eventEmitter.emit('output', dataString);
             if (this.options.failOnStderr) {
-                throw new Error(`Process wrote to stderr: ${dataString}`);
+                throw new Error('Failing because process wrote to stderr. Disable this behavior by setting failOnStderr to false.');
             }
         });
 
@@ -108,9 +115,14 @@ export class CLITest {
         });
     }
 
+    /**
+     * Wait for the process to exit.
+     * If the process returns a non-zero exit code, the promise will not be rejected.
+     * @returns A promise that resolves when the process exits with the exit code.
+     */
     waitForExit(): Promise<number | null> {
         if (!this.running && !this.starting) {
-            throw new Error('Cannot wait for exit when process is not running');
+            throw new Error(genericNotRunErr('wait for exit'));
         }
         return new Promise((resolve) => {
             this.eventEmitter.once('exit', (code) => {
@@ -119,31 +131,63 @@ export class CLITest {
         });
     }
 
-    waitForOutput(content: string): Promise<void> {
+    /**
+     * Wait for the process to write the given content to stdout or stderr.
+     * If the process exits before the content is found, the promise will be rejected.
+     * This method does not check past output, only output that is written after this method is called. For checking past output, use getOutput().
+     * Per default this method is only able to find content that is written in a single chunk by the CLI process. If the content is split into multiple chunks set multipleChunks to true.
+     *
+     * @param content The string to wait for.
+     * @param multipleChunks If true, the content can be split into multiple chunks. If false, the content must be written in a single chunk. Defaults to false.
+     * @returns A promise that resolves when the content is found, or rejects if the process exits before the content is found.
+     */
+    waitForOutput(content: string, multipleChunks = false): Promise<void> {
         if (!this.running && !this.starting) {
-            throw new Error('Cannot wait for output when process is not running');
+            throw new Error(genericNotRunErr('wait for output'));
+        }
+        if (!content.length) {
+            throw new Error('Output to wait for must not be empty.');
         }
         return new Promise((resolve, reject) => {
-            this.eventEmitter.on('output', (data: string) => {
-                if (data.includes(content)) {
-                    resolve(undefined);
-                }
-            });
+            if (!multipleChunks) {
+                this.eventEmitter.on('output', (data: string) => {
+                    if (data.includes(content)) {
+                        return resolve(undefined);
+                    }
+                });
+            } else {
+                const startIndex = this.output.length;
+                this.eventEmitter.on('output', () => {
+                    const output = this.output.slice(startIndex);
+                    if (output.includes(content)) {
+                        return resolve(undefined);
+                    }
+                });
+            }
             this.eventEmitter.on('exit', () => {
                 reject(new Error(`Process exited before output "${content}" was found`));
             });
         });
     }
 
+    /**
+     * You can use this method to listen for output (stdout and stderr) from the process.
+     * @param callback A callback that will be called when the process writes to stdout or stderr with the output as a string.
+     */
     onOutput(callback: (data: string) => void): void {
         this.eventEmitter.on('output', (data: string) => {
             callback(data);
         });
     }
 
+    /**
+     * Write data to stdin of the process.
+     * @param data The data to write.
+     * @returns A promise that resolves when the data has been written.
+     */
     write(data: string | Buffer): Promise<void> {
         if (!this.running) {
-            throw new Error('Cannot write when process is not running');
+            throw new Error(genericNotRunErr('write data to stdin'));
         }
         return new Promise((resolve, reject) => {
             if (!this.childProcess) {
@@ -158,27 +202,43 @@ export class CLITest {
         });
     }
 
+    /**
+     * Kill the process.
+     * @returns True if the process was killed successfully, false otherwise.
+     */
     kill(): boolean {
         if (!this.running) {
-            throw new Error('Cannot kill when process is not running');
+            throw new Error(genericNotRunErr('kill process'));
         }
         if (!this.childProcess) {
-            throw new Error('Child process is undefined. Run the process first.');
+            throw new Error('Child process is undefined. This should not happen.');
         }
         return this.childProcess.kill();
     }
 
+    /**
+     * Check if the process is running.
+     * @returns True if the process is running, false otherwise.
+     */
     isRunning(): boolean {
         return this.running;
     }
 
+    /**
+     * Get the exit code of the process. Returns null if the process has not exited yet. Throws an error if the process has not been run yet.
+     * @returns The exit code of the process or null.
+     */
     getExitCode(): number | null {
         if (!this.childProcess) {
-            throw new Error('Child process is undefined. Run the process first.');
+            throw new Error(genericNotRunErr('get exit code'));
         }
         return this.childProcess.exitCode;
     }
 
+    /**
+     * Get the output of the process (stdout and stderr).
+     * @returns The output of the process as a string.
+     */
     getOutput(): string {
         return this.output;
     }

@@ -22,3 +22,11 @@ test('Invalid wait for output', async () => {
     expect(() => cliTest.waitForOutput('')).toThrow('Output to wait for must not be empty.');
     cliTest.kill();
 });
+
+test('Do not fail because of output to stderr', async () => {
+    const stdErrTest = new CLITest('node', ['test/cli/stderr.mjs'], {
+        failOnStderr: false,
+    });
+    await stdErrTest.run();
+    await stdErrTest.waitForExit();
+});

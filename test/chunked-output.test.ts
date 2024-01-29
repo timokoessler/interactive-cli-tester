@@ -13,7 +13,7 @@ test('Fail reading output with multipleChunks = false', async () => {
     await cliTest.run();
     await cliTest.waitForOutput('Normal line', false);
     expect(async () => {
-        return await cliTest.waitForOutput('Chunked output continued', false);
+        await cliTest.waitForOutput('Chunked output continued', false);
     }).rejects.toThrow('Process exited before output "Chunked output continued" was found');
     await cliTest.waitForExit();
     expect(cliTest.getExitCode()).toBe(0);

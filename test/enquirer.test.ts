@@ -1,3 +1,4 @@
+import { platform } from 'os';
 import { ANSI, CLITest } from '../src/index';
 
 const cliTest = new CLITest('node', ['test/cli/enquirer.mjs']);
@@ -65,6 +66,10 @@ test('Test onOutput', async () => {
 test('Test kill', async () => {
     expect(cliTest.isRunning()).toBe(true);
     cliTest.kill();
-    expect(await cliTest.waitForExit()).toBe(null);
+    if (platform() === 'win32') {
+        expect(await cliTest.waitForExit()).toBe(null);
+    } else if (platform() === 'linux') {
+        expect(await cliTest.waitForExit()).toBe(143);
+    }
     expect(cliTest.isRunning()).toBe(false);
 });

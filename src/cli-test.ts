@@ -150,23 +150,43 @@ export class CLITest {
         }
         return new Promise((resolve, reject) => {
             if (!multipleChunks) {
-                this.eventEmitter.on('output', (data: string) => {
+                const onExit = () => {
+                    this.eventEmitter.off('exit', onExit);
+                    this.eventEmitter.off('output', onOutput);
+                    console.log(`Exited before output "${content}" was found`);
+                    reject(new Error(`Process exited before output "${content}" was found`));
+                };
+                this.eventEmitter.on('exit', onExit);
+                const onOutput = (data: string) => {
                     if (data.includes(content)) {
+                        this.eventEmitter.off('exit', onExit);
+                        this.eventEmitter.off('output', onOutput);
+                        console.log(`Resolved waitForOutput with single chunk for content "${content}"`);
                         return resolve(undefined);
                     }
-                });
+                };
+                this.eventEmitter.on('output', onOutput);
             } else {
                 const startIndex = this.output.length;
-                this.eventEmitter.on('output', () => {
+
+                const onMultiChunkExit = () => {
+                    this.eventEmitter.off('exit', onMultiChunkExit);
+                    this.eventEmitter.off('output', onMultiChunkOutput);
+                    console.log(`Exited before multi!!! output "${content}" was found`);
+                    reject(new Error(`Process exited before output "${content}" was found`));
+                };
+                this.eventEmitter.on('exit', onMultiChunkExit);
+                const onMultiChunkOutput = () => {
                     const output = this.output.slice(startIndex);
                     if (output.includes(content)) {
+                        this.eventEmitter.off('exit', onMultiChunkExit);
+                        this.eventEmitter.off('output', onMultiChunkOutput);
+                        console.log(`Resolved waitForOutput with multiple!!! chunks for content "${content}"`);
                         return resolve(undefined);
                     }
-                });
+                };
+                this.eventEmitter.on('output', onMultiChunkOutput);
             }
-            this.eventEmitter.on('exit', () => {
-                reject(new Error(`Process exited before output "${content}" was found`));
-            });
         });
     }
 

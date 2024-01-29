@@ -5,6 +5,14 @@ const cliTest = new CLITest('node', ['test/cli/enquirer.mjs']);
 const genericNotRunErr = (action: string) =>
     `Can not ${action} when CLI process is not running. Call run() first and ensure the process started and did not exit.`;
 
+test('Do not fail because of output to stderr', async () => {
+    const stdErrTest = new CLITest('node', ['test/cli/stderr.mjs'], {
+        failOnStderr: false,
+    });
+    await stdErrTest.run();
+    await stdErrTest.waitForExit();
+});
+
 test('Expect error when not running', async () => {
     expect(() => cliTest.getExitCode()).toThrow(genericNotRunErr('get exit code'));
     expect(() => cliTest.kill()).toThrow(genericNotRunErr('kill process'));

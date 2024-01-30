@@ -69,7 +69,7 @@ export class CLITest {
     }
 
     /**
-     * Run the CLI process.
+     * Execute the cli process.
      * @returns A promise that resolves when the process has been started.
      */
     run(): Promise<void> {
@@ -104,7 +104,10 @@ export class CLITest {
             this.output += dataString;
             this.eventEmitter.emit('output', dataString);
             if (this.options.failOnStderr) {
-                throw new Error('Failing because process wrote to stderr. Disable this behavior by setting failOnStderr to false.');
+                this.kill();
+                throw new Error(
+                    `Failing because process wrote to stderr. Disable this behavior by setting failOnStderr to false.\n${dataString}`,
+                );
             }
         });
 
@@ -187,7 +190,7 @@ export class CLITest {
     }
 
     /**
-     * You can use this method to listen for output (stdout and stderr) from the process.
+     * Register a callback to listen for output (stdout and stderr) from the process.
      * @param callback A callback that will be called when the process writes to stdout or stderr with the output as a string.
      */
     onOutput(callback: (data: string) => void): void {
@@ -257,5 +260,38 @@ export class CLITest {
      */
     getOutput(): string {
         return this.output;
+    }
+
+    /**
+     * Get the next output chunk of the process (stdout and stderr).
+     * This must not be a complete line, it can be a partial line, multiple lines or only one carriage return.
+     * @returns The next chunk of the process as a string.
+     */
+    getNextOutput(): Promise<string> {
+        if (!this.running && !this.starting) {
+            throw new Error(genericNotRunErr('wait for next output'));
+        }
+        return new Promise((resolve, reject) => {
+            const onExit = () => {
+                this.eventEmitter.off('exit', onExit);
+                this.eventEmitter.off('output', onOutput);
+                reject(new Error('Process exited before next output was found'));
+            };
+            this.eventEmitter.on('exit', onExit);
+            const onOutput = (data: string) => {
+                this.eventEmitter.off('exit', onExit);
+                resolve(data);
+            };
+            this.eventEmitter.once('output', onOutput);
+        });
+    }
+
+    /**
+     * Get the underlying child process for advanced usage.
+     * @returns The underlying child process or undefined if the process has not been run yet.
+     * @see https://nodejs.org/api/child_process.html#child_process_class_childprocess
+     */
+    getChildProcess(): ChildProcessWithoutNullStreams | undefined {
+        return this.childProcess;
     }
 }

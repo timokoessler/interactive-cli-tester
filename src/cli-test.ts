@@ -269,7 +269,7 @@ export class CLITest {
      */
     getNextOutput(): Promise<string> {
         if (!this.running && !this.starting) {
-            throw new Error(genericNotRunErr('wait for next output'));
+            throw new Error(genericNotRunErr('get next output'));
         }
         return new Promise((resolve, reject) => {
             const onExit = () => {

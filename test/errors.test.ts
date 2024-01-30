@@ -19,6 +19,7 @@ test('Expect error when not running', async () => {
     expect(() => cliTest.write('')).toThrow(genericNotRunErr('write data to stdin'));
     expect(() => cliTest.waitForOutput('')).toThrow(genericNotRunErr('wait for output'));
     expect(() => cliTest.waitForExit()).toThrow(genericNotRunErr('wait for exit'));
+    expect(() => cliTest.getNextOutput()).toThrow(genericNotRunErr('get next output'));
 });
 
 test('Expect error when running twice', async () => {

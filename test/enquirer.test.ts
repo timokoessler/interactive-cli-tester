@@ -63,6 +63,15 @@ test('Test onOutput', async () => {
     expect(output).toContain('Input test value');
 });
 
+test('Test getChildProcess', async () => {
+    const childProcess = cliTest.getChildProcess();
+    expect(childProcess).not.toBe(null);
+    expect(childProcess).not.toBe(undefined);
+    expect(typeof childProcess?.pid).toBe('number');
+    expect(childProcess?.pid).toBeGreaterThan(0);
+    expect(childProcess?.exitCode).toBe(null);
+});
+
 test('Test kill', async () => {
     expect(cliTest.isRunning()).toBe(true);
     cliTest.kill();

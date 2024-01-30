@@ -38,3 +38,10 @@ test('Test multi select', async () => {
     await cliTest.waitForOutput('Selected: TypeScript, JavaScript');
     expect(await cliTest.waitForExit()).toBe(0);
 });
+
+test('Cancel with ESC', async () => {
+    await cliTest.run();
+    await cliTest.waitForOutput('Please provide the following information:');
+    await cliTest.write(ANSI.ESC);
+    expect(await cliTest.waitForExit()).toBe(1);
+});

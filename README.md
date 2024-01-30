@@ -1,15 +1,59 @@
 # Interactive CLI Tester
 
-A tool for testing interactive command line interfaces.
+[![license](https://badgen.net/github/license/timokoessler/interactive-cli-tester)](https://github.com/timokoessler/interactive-cli-tester/blob/main/LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/timokoessler/interactive-cli-tester/badge)](https://www.codefactor.io/repository/github/timokoessler/interactive-cli-tester)
+[![codecov](https://codecov.io/gh/timokoessler/interactive-cli-tester/graph/badge.svg?token=N3E9VX3ELT)](https://codecov.io/gh/timokoessler/interactive-cli-tester)
 
-> [!WARNING]  
-> This software is still in early development and not ready for production use.
+A tool for testing interactive command line interfaces that require keyboard input.
+
+> ⚠️ This software is still in development and not ready for production use.
+
+You can find a complete API documentation [here](https://cli-tester.tkoessler.de).
 
 ## Features
 
 -   Test every command line interface - no matter in which programming language it is written 🧪
 -   Test interactive command line interfaces that require user input ⌨️
+-   Independent of the testing framework you want to use 😎
 -   Zero dependencies 📦
+
+## Getting Started
+
+You can install this package using npm:
+
+```bash
+npm install --save-dev interactive-cli-tester
+```
+
+The following example shows how to test a simple interactive CLI build with [enquirer](https://github.com/enquirer/enquirer) using [Jest](https://jestjs.io/). But you can use any Node.js testing framework you want.
+
+```javascript
+import { CLITest, ANSI } from 'interactive-cli-tester';
+
+test('Test example CLI', async () => {
+    const cliTest = new CLITest('node', ['example/readme.mjs']);
+
+    // Start the process, you can re-use the same instance for multiple runs
+    await cliTest.run();
+
+    // Wait until the CLI asks for input
+    await cliTest.waitForOutput('What do you want to do?');
+    // Equivalent to pressing down arrow and enter
+    await cliTest.write(ANSI.CURSOR_DOWN + ANSI.CR);
+
+    // Expect the CLI to ask for the name
+    await cliTest.waitForOutput('Input your name');
+    await cliTest.write('Acme' + ANSI.CR);
+
+    // Wait for the process to exit and check the exit code
+    expect(await cliTest.waitForExit()).toBe(0);
+
+    // Check that the output contains the expected text
+    expect(cliTest.getOutput().includes('Hello Acme!')).toBe(true);
+});
+```
+
+A complete API documentation can be found [here](https://cli-tester.tkoessler.de).
 
 ## Sources
 

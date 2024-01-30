@@ -69,7 +69,8 @@ export class CLITest {
     }
 
     /**
-     * Execute the cli process.
+     * Execute the CLI process.
+     * Tip: You can call this method multiple times to restart the process, after the process has exited.
      * @returns A promise that resolves when the process has been started.
      */
     run(): Promise<void> {

@@ -31,7 +31,7 @@ The following example shows how to test a simple interactive CLI build with [enq
 import { CLITest, ANSI } from 'interactive-cli-tester';
 
 test('Test example CLI', async () => {
-    const cliTest = new CLITest('node', ['example/readme.mjs']);
+    const cliTest = new CLITest('node', ['examples/readme.mjs']);
 
     // Start the process, you can re-use the same instance for multiple runs
     await cliTest.run();
@@ -53,7 +53,7 @@ test('Test example CLI', async () => {
 });
 ```
 
-A complete API documentation can be found [here](https://cli-tester.tkoessler.de).
+A complete API documentation including all available methods and options can be found [here](https://cli-tester.tkoessler.de).
 
 ## Sources
 

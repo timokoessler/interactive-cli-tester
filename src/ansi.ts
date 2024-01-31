@@ -28,3 +28,11 @@ export const CURSOR_NEXT_LINE = `${CSI}E`;
 export const CURSOR_PREVIOUS_LINE = `${CSI}F`;
 export const CURSOR_HORIZONTAL_ABSOLUTE = `${CSI}G`;
 export const CURSOR_HOME = `${CSI}H`;
+
+// Aliases for easier use
+export const ENTER = CR;
+export const BACKSPACE = BS;
+export const ARROW_UP = CURSOR_UP;
+export const ARROW_DOWN = CURSOR_DOWN;
+export const ARROW_RIGHT = CURSOR_FORWARD;
+export const ARROW_LEFT = CURSOR_BACK;

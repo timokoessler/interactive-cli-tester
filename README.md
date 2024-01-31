@@ -1,8 +1,11 @@
 # Interactive CLI Tester
 
+[![npm version](https://badgen.net/npm/v/interactive-cli-tester)](https://www.npmjs.com/package/interactive-cli-tester)
+[![npm downloads](https://badgen.net/npm/dt/interactive-cli-tester)](https://www.npmjs.com/package/interactive-cli-tester)
 [![license](https://badgen.net/github/license/timokoessler/interactive-cli-tester)](https://github.com/timokoessler/interactive-cli-tester/blob/main/LICENSE)
 [![CodeFactor](https://www.codefactor.io/repository/github/timokoessler/interactive-cli-tester/badge)](https://www.codefactor.io/repository/github/timokoessler/interactive-cli-tester)
 [![codecov](https://codecov.io/gh/timokoessler/interactive-cli-tester/graph/badge.svg?token=N3E9VX3ELT)](https://codecov.io/gh/timokoessler/interactive-cli-tester)
+[![install size](https://packagephobia.com/badge?p=interactive-cli-tester)](https://packagephobia.com/result?p=interactive-cli-tester)
 
 A tool for testing interactive command line interfaces that require keyboard input.
 

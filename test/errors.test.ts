@@ -39,3 +39,13 @@ test('Do not fail because of output to stderr', async () => {
     await stdErrTest.run();
     await stdErrTest.waitForExit();
 });
+
+test('Expect error because of invalid command', async () => {
+    const invalidCommand = new CLITest('./ab123456', ['invalid-command']);
+    try {
+        await invalidCommand.run();
+        expect(false).toBe(true);
+    } catch (error) {
+        // Expect error to be thrown
+    }
+});

@@ -112,10 +112,19 @@ export class CLITest {
             }
         });
 
-        return new Promise((resolve) => {
-            this.eventEmitter.once('spawn', () => {
+        return new Promise((resolve, reject) => {
+            const onSpawn = () => {
+                this.eventEmitter.off('error', onError);
                 resolve(undefined);
-            });
+            };
+
+            const onError = (err: Error) => {
+                this.eventEmitter.off('spawn', onSpawn);
+                reject(`Error starting child process: ${err.message}`);
+            };
+
+            this.eventEmitter.once('spawn', onSpawn);
+            this.childProcess!.once('error', onError);
         });
     }
 

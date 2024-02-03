@@ -54,6 +54,13 @@ export class CLITest {
     private output = '';
     private options: CLITestOptions;
 
+    /**
+     * Create a new CLI test instance.
+     * If you want to measure the code coverage of a JS/TS CLI, you may want to prepend the node command with 'c8' or 'nyc'.
+     * @param command The command that should be executed to start the CLI process.
+     * @param args The arguments that should be passed.
+     * @param options Additional options.
+     */
     constructor(command: string, args: string[] = [], options = {} as CLITestOptions) {
         this.command = command;
         this.args = args;
@@ -71,6 +78,7 @@ export class CLITest {
     /**
      * Execute the CLI process.
      * Tip: You can call this method multiple times to restart the process, after the process has exited.
+     * @throws If the process is already running or starting or if the command produces an error.
      * @returns A promise that resolves when the process has been started.
      */
     run(): Promise<void> {
@@ -131,6 +139,7 @@ export class CLITest {
     /**
      * Wait for the process to exit.
      * If the process returns a non-zero exit code, the promise will not be rejected.
+     * @throws If the process is not running or starting.
      * @returns A promise that resolves when the process exits with the exit code.
      */
     waitForExit(): Promise<number | null> {

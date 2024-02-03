@@ -58,6 +58,14 @@ test('Test example CLI', async () => {
 
 A complete API documentation including all available methods and options can be found [here](https://cli-tester.tkoessler.de).
 
+## Code Coverage
+
+It can be difficult to configure your testing framework to collect code coverage for Node.js child processes. For example, Jest does not support this out of the box ([#5274](https://github.com/jestjs/jest/issues/5274)), even though [bcoe/c8](https://github.com/bcoe/c8) and [istanbuljs/nyc](https://github.com/istanbuljs/nyc) do. One possible workaround for Jest is described in [this comment](https://github.com/jestjs/jest/issues/3190#issuecomment-354758036), but this is not a perfect solution and may not work when using TypeScript.
+
+You can find a complicated and not perfect workaround using two seperate Jest runners and nyc in my repo [timokoessler/docker-deploy-api](https://github.com/timokoessler/docker-deploy-api). I am not using c8 because of the issue [#462](https://github.com/bcoe/c8/issues/462).
+
+If you have a question, have found a better way or successfully used another testing framework, please create an issue or send me a message.
+
 ## Sources
 
 -   [ANSI Escape Sequences](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797)

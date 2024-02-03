@@ -54,7 +54,7 @@ export class CLITest {
     private output = '';
     private options: CLITestOptions;
 
-    constructor(command: string, args: string[], options = {} as CLITestOptions) {
+    constructor(command: string, args: string[] = [], options = {} as CLITestOptions) {
         this.command = command;
         this.args = args;
         this.eventEmitter = new EventEmitter();

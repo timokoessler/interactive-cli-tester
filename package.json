@@ -1,9 +1,9 @@
 {
     "name": "interactive-cli-tester",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "A tool for testing interactive command line interfaces",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {

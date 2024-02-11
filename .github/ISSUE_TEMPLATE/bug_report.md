@@ -18,8 +18,7 @@ A clear and concise description of what you expected to happen.
 **Software information**
 
 -   OS: (e.g. Debian 11, Windows 11)
--   Runtime: (e.g. Node.js)
--   Runtime version: (e.g. 18.13)
+-   Runtime version: (e.g. Node.js 18.13)
 -   Version of this package: (e.g. 0.1.0)
 
 **Additional context**

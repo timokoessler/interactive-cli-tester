@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2024-02-11
+
+_Update Options and Improved Error Handling_
+
+### Added
+
+-   New `updateOptions` method to change the options of a test instance after it has been created
+
+### Changed
+
+-   Improved error handling of run method
+-   Update dev dependencies
+
 ## [0.2.0] - 2024-02-03
 
 _Stability Improvements, Documentation, and Simplification_

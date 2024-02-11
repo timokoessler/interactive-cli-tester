@@ -34,7 +34,7 @@ export type CLITestOptions = {
          */
         gid?: number;
         /**
-         * Tte maximum amount of time the process is allowed to run in milliseconds.
+         * The maximum amount of time the process is allowed to run in milliseconds.
          * @default undefined
          */
         timeout?: number;
@@ -86,9 +86,14 @@ export class CLITest {
             throw new Error('Process is already running or starting.');
         }
         this.starting = true;
-        this.childProcess = spawn(this.command, this.args, {
-            ...this.options.process,
-        });
+        try {
+            this.childProcess = spawn(this.command, this.args, {
+                ...this.options.process,
+            });
+        } catch (err) {
+            this.starting = false;
+            throw new Error(`Error while starting child process: ${(err as Error).message}`);
+        }
 
         this.childProcess.on('spawn', () => {
             this.running = true;
@@ -312,5 +317,13 @@ export class CLITest {
      */
     getChildProcess(): ChildProcessWithoutNullStreams | undefined {
         return this.childProcess;
+    }
+
+    /**
+     * Update the options of the CLI test instance. The current options will be merged with the new options.
+     * @param options The options to change.
+     */
+    updateOptions(options: CLITestOptions): void {
+        this.options = { ...this.options, ...options };
     }
 }
